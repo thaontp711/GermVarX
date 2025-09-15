@@ -103,8 +103,3 @@ nextflow run src/main.nf -profile docker --inputVCF_gatk <path/to/folder_GATK_VC
 ```bash
 nextflow run src/main.nf -profile docker --inputVCF_dv <path/to/folder_DeepVariant_VCF_files>
 ```
-
----
-
-## License
-📜 GermVarX is released under [Insert License Here].
