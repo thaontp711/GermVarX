@@ -54,7 +54,13 @@ docker build -t germvarx-pipeline:0.1 ./docker/germvarx-pipeline
 
 ---
 
-## 4. Run the Pipeline
+## 4. Configure Parameters
+
+Configure input parameters and execution settings in the configuration files provided within the `configuration` directory.
+
+---
+
+## 5. Run the Pipeline
 
 After parameter configuration, run the pipeline from the **GermVarX directory** (where `nextflow.config` is located):
 
