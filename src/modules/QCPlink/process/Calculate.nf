@@ -31,7 +31,7 @@ process Calculate {
 
         """
         plink --bfile ${sampleID}_initial \
-            --geno 0.1 \
+            --geno ${params.VarCallRate} \
             --make-bed \
             --out ${sampleID}_variant_filtered
 
