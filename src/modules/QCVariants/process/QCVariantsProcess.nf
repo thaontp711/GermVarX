@@ -19,13 +19,13 @@ process QCVariantsProcess {
     qcvariants_vcf_tbi = "${qcvariants_vcf}.tbi"
     
     """
-    bcftools view --include 'QUAL>=20' ${vcf} | \
-    bcftools filter -e 'FMT/DP < 10 | FMT/GQ < 20' \
+    bcftools view --include 'QUAL>=${params.QUAL}' ${vcf} | \
+    bcftools filter -e 'FMT/DP < ${params.DP} | FMT/GQ < ${params.GQ}' \
     -S . -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.vcf.gz
 
     bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.vcf.gz
 
-    python ${params.py_ABfilter} ${OUTPUT_PREFIX}.PASS.filtered.vcf.gz ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz
+    python ${params.py_ABfilter} ${OUTPUT_PREFIX}.PASS.filtered.vcf.gz ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz ${params.ABlower} ${params.ABupper}
     bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz
 
     bcftools +fill-tags ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz -- -t AC,AN,AF | bcftools view -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.vcf.gz
