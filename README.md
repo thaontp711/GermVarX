@@ -17,13 +17,29 @@ GermVarX requires **Nextflow (version ≥ 24)**.
 
 ---
 
-## 2. Download the GermVarX Pipeline
+## 2. Download the GermVarX Pipeline and Test Datasets
 
 Clone the source code from the official GitHub repository:
 
 ```bash
-git clone <GermVarX_repository_link>
+git clone https://github.com/thaontp711/GermVarX.git
 cd GermVarX
+```
+Create a directory for the test data and download paired-end WES FASTQ files for two samples along with the corresponding target BED file:
+
+```mkdir -p testdata/fastq testdata/bed
+cd testdata/fastq
+
+# Sample 1: NA12891
+wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/novaseq/wes_agilent/50x/NA12891.novaseq.wes_agilent.50x.R1.fastq.gz
+wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/novaseq/wes_agilent/50x/NA12891.novaseq.wes_agilent.50x.R2.fastq.gz
+
+# Sample 2: NA12892
+wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/novaseq/wes_agilent/50x/NA12892.novaseq.wes_agilent.50x.R1.fastq.gz
+wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/fastq/novaseq/wes_agilent/50x/NA12892.novaseq.wes_agilent.50x.R2.fastq.gz
+
+cd ../bed
+wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/grch38/bed/agilent.targets.grch38.bed
 ```
 
 ---
