@@ -10,8 +10,8 @@ process VQSRProcess {
 
     output:
     tuple val(sampleID), 
-          path("${gatk_snp_indel_recalibratedVCF}"), 
-          path("${gatk_snp_indel_recalibratedVCF_idx}"), 
+          path("${gatk_snp_indel_pass_vcf}"), 
+          path("${gatk_snp_indel_pass_vcf_idx}"), 
           emit: gatk_recalibratedVCF
 
     val(sampleID), emit: doneVariantRecalibration
@@ -31,7 +31,10 @@ process VQSRProcess {
 
     gatk_snp_indel_recalibratedVCF = "${sampleID}_snp_indel.vcf.gz"
     gatk_snp_indel_recalibratedVCF_idx = "${gatk_snp_indel_recalibratedVCF}.tbi"
-    
+
+    gatk_snp_indel_pass_vcf = "${sampleID}_snp_indel_pass.vcf.gz"
+    gatk_snp_indel_pass_vcf_idx = "${gatk_snp_indel_pass_vcf}.tbi"
+
     """   
 
     # snps
@@ -80,5 +83,11 @@ process VQSRProcess {
         --recal-file ${gatk_indel_recal} \\
         --tranches-file ${tranches_file_indels} \\
         -mode INDEL 
+
+    gatk SelectVariants \
+        -R ${params.alignmentRef} \
+        -V ${gatk_snp_indel_recalibratedVCF} \
+        --exclude-filtered \
+        -O ${gatk_snp_indel_pass_vcf}
     """
 }
