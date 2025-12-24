@@ -1,5 +1,5 @@
 # GermVarX
-**An Automated Workflow for Germline Variant Calling from Whole-Exome Sequencing Cohort Studies**
+**An Automated Workflow for Joint Germline Variant Exploration in Whole-Exome Sequencing Cohorts**
 
 GermVarX is distributed as a **Nextflow pipeline** with **Docker container support**.
 
