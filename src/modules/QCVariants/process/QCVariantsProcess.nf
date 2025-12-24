@@ -3,7 +3,7 @@ process QCVariantsProcess {
 
     maxForks params.heavyFork
 
-    tag "QC Variants from consensus vcf file"
+    tag "QC Variants ..."
 
     publishDir "$params.outputDir/VariantCalling/VariantsFromQCVariants", mode:"copy"
 
@@ -19,46 +19,32 @@ process QCVariantsProcess {
     qcvariants_vcf_tbi = "${qcvariants_vcf}.tbi"
     
     """
-    bcftools view --include 'QUAL>=${params.QUAL}' ${vcf} | \
+    bcftools norm -f ${params.alignmentRef} -Oz -o ${OUTPUT_PREFIX}.normf.vcf.gz ${vcf} 
+    bcftools view -e 'ALT="*"' -m2 -M2 -Oz -o ${OUTPUT_PREFIX}.PASS.vcf.gz ${OUTPUT_PREFIX}.normf.vcf.gz
+    bcftools index -t ${OUTPUT_PREFIX}.PASS.vcf.gz
+
+    bcftools view --include 'QUAL>=${params.QUAL}' ${OUTPUT_PREFIX}.PASS.vcf.gz | \
     bcftools filter -e 'FMT/DP < ${params.DP} | FMT/GQ < ${params.GQ}' \
     -S . -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.vcf.gz
 
     bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.vcf.gz
 
-    python ${params.py_ABfilter} ${OUTPUT_PREFIX}.PASS.filtered.vcf.gz ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz ${params.ABlower} ${params.ABupper}
+    python ${params.py_ABfilter} ${OUTPUT_PREFIX}.PASS.filtered.vcf.gz \
+    ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz \
+    ${params.ABlower} ${params.ABupper}
     bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz
 
-    bcftools +fill-tags ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz -- -t AC,AN,AF | bcftools view -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.vcf.gz
+    bcftools +fill-tags ${OUTPUT_PREFIX}.PASS.filtered.AB.vcf.gz -- -t AC,AN,AF | \
+    bcftools view -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.vcf.gz
     bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.vcf.gz
 
-    bcftools norm -f ${params.alignmentRef} -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.vcf.gz ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.vcf.gz
-    bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.vcf.gz
+    bcftools view -r \$(echo chr{1..22} chrX chrY| tr ' ' ',') \
+    ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.vcf.gz -Oz -o \
+    ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags23.vcf.gz
+    bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags23.vcf.gz
 
-    bcftools annotate --set-id +'%CHROM\\:%POS\\:%REF\\:%FIRST_ALT' ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.vcf.gz -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id.vcf.gz
-    bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id.vcf.gz
-
-    bcftools view ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id.vcf.gz -r \$(echo chr{1..22} chrX chrY| tr ' ' ',') -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id23.vcf.gz
-    bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id23.vcf.gz
-
-    # extract bialleic variants only
-    bcftools view -m2 -M2 ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id23.vcf.gz -Oz -o ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id23.biallelic.vcf.gz
-    bcftools index -t ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id23.biallelic.vcf.gz
-
-    bcftools view ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags.normf.id23.biallelic.vcf.gz | \
-    awk '
-    /^#/ { print; next }
-    {
-        key = \$1 FS \$2 FS \$4 FS \$5
-        if (!qual[key] || \$6 > qual[key]) {
-        qual[key] = \$6
-        line[key] = \$0
-        }
-    }
-    END {
-        for (k in line) print line[k]
-    }
-    ' | bcftools sort -Oz -o ${qcvariants_vcf}
-
+    bcftools annotate --set-id '%CHROM\\:%POS\\:%REF\\:%ALT' \
+    ${OUTPUT_PREFIX}.PASS.filtered.AB.fixedtags23.vcf.gz -Oz -o ${qcvariants_vcf}
     bcftools index -t ${qcvariants_vcf}
     """
 }
