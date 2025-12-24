@@ -2,7 +2,7 @@ FROM ubuntu:22.04
 
 LABEL \
   author="Nguyen Thi Phuong Thao" \
-  description="An Automated Workflow for Germline Variant Calling from Whole-Exome Sequencing Cohort Studies" \
+  description="An Automated Workflow for Joint Germline Variant Exploration in Whole-Exome Sequencing Cohorts" \
   maintainer="<thaontp@ioit.ac.vn>"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -70,3 +70,4 @@ RUN apt-get update --fix-missing && \
     mv /mosdepth/scripts/plot-dist.py /usr/local/bin/ &&\
     ## Clean up
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
