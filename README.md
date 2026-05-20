@@ -1,11 +1,11 @@
 # GermVarX
 **An Automated Workflow for Joint Germline Variant Exploration in Whole-Exome Sequencing Cohorts**
 
-GermVarX is distributed as a **Nextflow pipeline** with **Docker container support**.
+GermVarX is an open-source workflow for joint germline variant discovery and exploration in WES cohort studies. A key feature of GermVarX is its implementation of joint variant calling, enabling simultaneous genotyping of multiple samples to produce a single, high-confidence multi-sample VCF, optimized for downstream analyses. Implemented in Nextflow DSL2 with Docker, it supports fully automated execution, a modular architecture, and parallelized task execution across diverse computing environments, including workstations, HPC clusters, and cloud platforms. The workflow integrates two state-of-the-art variant callers—GATK HaplotypeCaller and DeepVariant—with joint genotyping performed via GATK or GLnexus. To increase reliability, GermVarX supports consensus generation between callers, coupled with sample- and cohort-level quality control, functional annotation using the Variant Effect Predictor (VEP), and unified reporting through MultiQC. In addition, it provides PLINK-compatible outputs, facilitating seamless integration with statistical and association analyses.
 
 ---
 
-## 1. Environment Setup
+## Environment Setup
 
 ### Install Docker
 Follow the installation instructions for your platform:  
@@ -17,7 +17,7 @@ GermVarX requires **Nextflow (version ≥ 24)**.
 
 ---
 
-## 2. Download the GermVarX Pipeline and Test Datasets
+## Download the GermVarX Pipeline and Test Datasets
 
 Clone the source code from the official GitHub repository:
 
@@ -44,7 +44,7 @@ wget https://storage.googleapis.com/brain-genomics-public/research/sequencing/gr
 
 ---
 
-## 3. Set Up Docker Images
+## Set Up Docker Images
 
 Pull the required pre-built images and build the GermVarX custom image:
 
@@ -70,13 +70,13 @@ docker build -t germvarx-pipeline:0.1 ./docker/germvarx-pipeline
 
 ---
 
-## 4. Configure Parameters
+## Configure Parameters
 
-Configure input parameters and execution settings in the configuration files provided within the `configuration` directory.
+Configure input parameters and execution settings in the configuration files provided within the `configuration` directory. For detailed instructions and parameter descriptions, please refer to [the protocol documentation](https://dx.doi.org/10.17504/protocols.io.3byl48kr8vo5/v1)
 
 ---
 
-## 5. Run the Pipeline
+## Run the Pipeline
 
 After parameter configuration, run the pipeline from the **GermVarX directory** (where `nextflow.config` is located):
 
@@ -94,7 +94,7 @@ nextflow run /path/to/project/src/main.nf \
 
 ---
 
-## 5. INPUT Options
+## INPUT Options
 
 ### FASTQ input
 ```bash
@@ -125,3 +125,11 @@ nextflow run src/main.nf -profile docker --inputVCF_gatk <path/to/folder_GATK_VC
 ```bash
 nextflow run src/main.nf -profile docker --inputVCF_dv <path/to/folder_DeepVariant_VCF_files>
 ```
+
+---
+
+## Citation
+If you use `GermVarX` for your analysis, please cite the following publication:
+
+Nguyen TTP, Nguyen DD, Mai TV, Nguyen DK, Nguyen TD, Truong NTM, Ha HH, Tran THT (2026) GermVarX: A Robust Workflow for Joint Germline Variant Exploration in whole
+exome sequencing cohorts. PLoS One 21(4): e0345561. https://doi.org/10.1371/journal.pone.0345561
