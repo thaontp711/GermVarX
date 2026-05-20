@@ -3,6 +3,10 @@
 
 GermVarX is an open-source workflow for joint germline variant discovery and exploration in WES cohort studies. A key feature of GermVarX is its implementation of joint variant calling, enabling simultaneous genotyping of multiple samples to produce a single, high-confidence multi-sample VCF, optimized for downstream analyses. Implemented in Nextflow DSL2 with Docker, it supports fully automated execution, a modular architecture, and parallelized task execution across diverse computing environments, including workstations, HPC clusters, and cloud platforms. The workflow integrates two state-of-the-art variant callers—GATK HaplotypeCaller and DeepVariant—with joint genotyping performed via GATK or GLnexus. To increase reliability, GermVarX supports consensus generation between callers, coupled with sample- and cohort-level quality control, functional annotation using the Variant Effect Predictor (VEP), and unified reporting through MultiQC. In addition, it provides PLINK-compatible outputs, facilitating seamless integration with statistical and association analyses.
 
+<p align="center">
+    <img title="GermVarX Workflow" src="GermVarX.png">
+</p>
+
 ---
 
 ## Environment Setup
